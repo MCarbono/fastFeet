@@ -19,7 +19,10 @@ routes.use(authMiddleware); // routes below this one will use this middleware
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients/:id', RecipientController.update);
 
-routes.post('/files', upload.single('file'), FileController.store);
-
 routes.post('/deliveryman', DeliverymanController.store);
+routes.get('/deliveryman', DeliverymanController.list);
+routes.get('/deliveryman/:id', DeliverymanController.show);
+routes.delete('/deliveryman/:id', DeliverymanController.destroy);
+
+routes.post('/files', upload.single('file'), FileController.store);
 module.exports = routes;
