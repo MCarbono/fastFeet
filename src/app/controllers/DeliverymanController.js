@@ -58,6 +58,37 @@ class DeliverymanController {
 
     res.status(200).json({ success: 'Deliveryman deleted with success' });
   }
+
+  async update(req, res) {
+    const schema = yup.object().shape({
+      name: yup.string().matches(/[A-Za-z]{3,}/),
+      avatar_id: yup.number().integer(),
+      email: yup.string().email()
+    })
+
+    if(!(await schema.isValid(req.body))){
+      return res.status(400).json({error: 'validation fails'})
+    }
+
+    const { id } = req.params;
+
+    const { name, avatar_id, email } = req.body;
+
+    const deliveryman = await Deliveryman.findByPk(id);
+
+    await deliveryman.update({
+      name,
+      avatar_id,
+      email
+    });
+
+    return res.json({
+      message: 'Deliveryman updated with success',
+      name,
+      avatar_id,
+      email
+    });
+  }
 }
 
 export default new DeliverymanController();
