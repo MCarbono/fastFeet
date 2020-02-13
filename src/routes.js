@@ -8,6 +8,7 @@ import RecipientController from './app/controllers/RecipientController';
 import FileController from './app/controllers/FileController';
 import DeliverymanController from './app/controllers/DeliverymanController';
 import DeliveryController from './app/controllers/DeliveryController';
+import TaskController from './app/controllers/TaskController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -15,6 +16,10 @@ const routes = new Router();
 const upload = multer(multerConfig);
 
 routes.post('/sessions', SessionController.store);
+
+routes.get('/deliveryman/deliveries/:id', TaskController.list); // this route shows all deliveries by the id of the deliveryman that it's not calceled or ended
+routes.get('/deliveryman/:id/deliveries', TaskController.listEnded); // this route show all the deliveries that was deliveried by the deliveryman
+routes.put('/deliveryman/deliveries/:id', TaskController.takePackage); // this route show all the deliveries that was deliveried by the delvieryman
 
 routes.use(authMiddleware); // routes below this one will use this middleware
 routes.post('/recipients', RecipientController.store);

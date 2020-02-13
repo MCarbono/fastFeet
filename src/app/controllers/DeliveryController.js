@@ -1,7 +1,6 @@
+import * as yup from 'yup';
 import Delivery from '../models/Delivery';
-import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
-import File from '../models/File';
 
 class DeliveryController {
 
@@ -22,12 +21,32 @@ class DeliveryController {
 
   async store(req, res) {
 
+    const schema = yup.object().shape({
+      recipient_id: yup.number().integer().required(),
+      deliveryman_id: yup.number().integer().required(),
+      product: yup.string().required()
+    });
+
+    if(!(await schema.isValid(req.body))){
+      return res.status(400).json({ error: 'validation fails' })
+    }
+
     const delivery = await Delivery.create(req.body);
 
     return res.json(delivery);
   }
 
-  async update(req, res){
+  async update(req, res) {
+
+    const schema = yup.object().shape({
+      recipient_id: yup.number().integer(),
+      deliveryman_id: yup.number().integer(),
+      product: yup.string()
+    });
+
+    if(!(await schema.isValid(req.body))){
+      return res.status(400).json({ error: 'validation fails' })
+    }
 
     const { recipient_id, deliveryman_id, product } = req.body;
 
@@ -56,8 +75,7 @@ class DeliveryController {
     return res.json(deliveries);
   }
 
-  async destroy(req, res){
-
+  async destroy(req, res) {
     const delivery = await Delivery.findByPk(req.params.id);
 
     if(!delivery){
@@ -68,6 +86,8 @@ class DeliveryController {
 
     return res.json({ message: 'delivery deleted with success.' });
   }
+
+
 }
 
 export default new DeliveryController();
