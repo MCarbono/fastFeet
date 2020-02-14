@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import Recipient from '../models/Recipient';
 
 class RecipientController {
-  async store(req, res) {
+  async store (req, res) {
     const schema = yup.object().shape({
       name: yup.string().required(),
       number: yup
