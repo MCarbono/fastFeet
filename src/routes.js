@@ -20,8 +20,16 @@ routes.post('/sessions', SessionController.store);
 
 routes.get('/deliveryman/deliveries/:id', TaskController.list); // this route shows all deliveries by the id of the deliveryman that it's not calceled or ended
 routes.get('/deliveryman/:id/deliveries', TaskController.listEnded); // this route show all the deliveries that was deliveried by the deliveryman
-routes.put('/deliveryman/:idDeliveryman/deliveries/:idDelivery', TaskController.takePackage); // this route inserts a date to a start_date field.
-routes.put('/deliveryman/deliveries/:id', upload.single('file'), TaskController.deliverOrder); // this route inserts a date to a end date field and a signature_id field, it's a picture.
+routes.put(
+  '/deliveryman/:idDeliveryman/deliveries/:idDelivery',
+  TaskController.takePackage
+); // this route inserts a date to a start_date field.
+routes.put(
+  '/deliveryman/deliveries/:id',
+  upload.single('file'),
+  TaskController.deliverOrder
+); // this route inserts a date to a end date field and a signature_id field, it's a picture.
+
 routes.post('/delivery/:id/problems', DeliveryProblemsController.store); // this route makes registers the problems of a delivery in deliveries_problems table with a DeliveryProblmesController
 
 routes.use(authMiddleware); // routes below this one will use this middleware
@@ -41,6 +49,10 @@ routes.get('/deliveries/:id', DeliveryController.show);
 routes.delete('/deliveries/:id', DeliveryController.destroy);
 
 routes.get('/delivery/problems', DeliveryProblemsController.list); // list all orders with a delivery problem
-
+routes.get('/delivery/:id/problems', DeliveryProblemsController.show); // this route shows all the problems for a specific delivery
+routes.delete(
+  '/problems/:id/cancel-delivery',
+  DeliveryProblemsController.destroy
+); // this route puts a date to the canceled_at field in deliveries table
 routes.post('/files', upload.single('file'), FileController.store);
 module.exports = routes;

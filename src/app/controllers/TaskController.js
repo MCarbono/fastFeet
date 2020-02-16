@@ -1,12 +1,18 @@
 import { Op } from 'sequelize';
-import { format, setSeconds, setMinutes, setHours, setMilliseconds, parseISO } from 'date-fns';
+import {
+  format,
+  setSeconds,
+  setMinutes,
+  setHours,
+  setMilliseconds,
+  parseISO
+} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Delivery from '../models/Delivery';
 import File from '../models/File';
 
 class TaskController {
-
-  async list(req, res){
+  async list(req, res) {
     const deliveriesByDeliveryman = await Delivery.findAll({
       where: {
         deliveryman_id: req.params.id,
@@ -32,20 +38,20 @@ class TaskController {
   }
 
   async takePackage(req, res) {
-    const  delivery_id  = req.params.idDelivery; // Delivery id;
-    const  deliveryman_id  = req.params.idDeliveryman;
+    const delivery_id = req.params.idDelivery; // Delivery id;
+    const deliveryman_id = req.params.idDeliveryman;
 
     const delivery = await Delivery.findOne({
       where: {
         id: delivery_id
       }
-    })
+    });
 
-    if(!delivery){
+    if (!delivery) {
       return res.status(401).json({ error: 'delivery not found' });
     }
 
-    /*let start_time = format(
+    /* let start_time = format(
       new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", { locale: pt }
     );
     start_time = setSeconds(parseISO(start_time), 0);
@@ -60,7 +66,7 @@ class TaskController {
     end_time = setSeconds(parseISO(end_time), 0);
     end_time = setMinutes(end_time, 0);
     end_time = setHours(end_time, 18);
-    end_time = setMilliseconds(end_time, 0);*/
+    end_time = setMilliseconds(end_time, 0); */
 
     const start_time = new Date();
     start_time.setHours(8, 0, 0, 0);
@@ -70,29 +76,31 @@ class TaskController {
 
     const totalRetrievesToday = await Delivery.count({
       where: {
-        deliveryman_id: deliveryman_id,
+        deliveryman_id,
         start_date: {
           [Op.gte]: start_time,
           [Op.lte]: end_time
         }
       }
-      });
+    });
 
-    if(totalRetrievesToday > 4) {
-      return res.status(401).json({ error: 'you may only retrieve 5 orders a day'})
+    if (totalRetrievesToday > 4) {
+      return res
+        .status(401)
+        .json({ error: 'you may only retrieve 5 orders a day' });
     }
 
-    const hour = format(
-      new Date(), 'H', { locale: pt }
-    );
+    const hour = format(new Date(), 'H', { locale: pt });
 
-    if(hour < 8 || hour > 18){
-      return res.status(401).json({ error: 'The products must be taken by 8am to 18pm' });
+    if (hour < 8 || hour > 18) {
+      return res
+        .status(401)
+        .json({ error: 'The products must be taken by 8am to 18pm' });
     }
 
     await delivery.update({
       start_date: new Date()
-    })
+    });
 
     return res.json(delivery);
   }
